@@ -1,0 +1,30 @@
+import arcpy
+
+path = r'\\10.70.8.215\sig\48_revisionGDB\insumos\ACTUALIZADOS_2024\LA PRIMAVERA\99524.gdb'
+
+
+#D:\SIG\48_revisionGDB\insumos\ACTUALIZADOS_2024\ATACO\73067.gdb
+
+# Lista de archivos en el directorio de la geodatabase
+#print(os.listdir(path))
+
+arcpy.env.workspace = path
+
+fc = []
+
+# Enumera todos los conjuntos de datos
+datasets = arcpy.ListDatasets("*", "Feature")
+datasets = [''] + datasets if datasets is not None else []
+
+# Itera sobre cada conjunto de datos
+for dataset in datasets:
+    for feature_class in arcpy.ListFeatureClasses("*", "ALL", dataset):
+        records = arcpy.GetCount_management(feature_class)[0]
+        sr = arcpy.Describe(feature_class).spatialReference
+        sr_texto = sr.name if sr else "Sin Informacion"
+
+        fc.append([dataset, feature_class, records, "Sí" if int(records) > 0 else "No", sr_texto])
+
+# Imprime los resultados
+for fila in fc:
+    print(";".join(str(campo) for campo in fila))
