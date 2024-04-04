@@ -1,0 +1,16 @@
+# Funcion para crear un df de los predios con coordenadas
+# Crear un df de los predios
+def dfPredios(capa):
+    campos = ["SHAPE@XY", "CODIGO","codigo_municipio"]
+
+    # Crear una lista de tuplas con las coordenadas X e Y y el código
+    datos = []
+    for fila in arcpy.da.SearchCursor(capa, campos):
+        x, y = fila[0]  # Coordenadas X e Y
+        codigo = fila[1]  # Código
+        divipola = fila[2] # Divipola
+        datos.append((x, y, codigo, divipola))
+
+    # Crear el DataFrame
+    dfpred = pd.DataFrame(datos, columns=['X', 'Y', 'CODIGO', 'DIVIPOLA'])
+    return dfpred
